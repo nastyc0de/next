@@ -9,9 +9,11 @@ export const Layout = (props) => {
             <Global
                 styles={css`
                     :root{
-                        --primary:#583E37;
-                        --second:#DD2D4A;
-                        --third:#75B9BE;
+                        --primary:#D61B41;
+                        --second:#7A0F24;
+                        --third:#EE768E;
+                        --forth:#FBDDE3;
+                        --fifth:#7F7174;
                     }
                     html{
                         font-size: 62.5%;
