@@ -16,8 +16,9 @@ const HeaderNav = styled.div`
     }
 `;
 const Logo = styled.p`
+    background-color:red;
     color:var(--primary);
-    font-size:6rem;
+    font-size:3rem;
     line-height:0;
     font-weight:700;
     font-family:'Concert One', cursive;
