@@ -7,12 +7,13 @@ export const useValidate = (initialState, validate, func) => {
     const [submitForm, setSubmitForm] = useState(false);
     
     useEffect(() => {
-        const noErrores = Object.keys(error).length === 0;
-        if(noErrores){
-            func();
+        if (submitForm) {
+            const noErrores = Object.keys(error).length === 0;
+            if(noErrores){
+                func();
+            }
+            setSubmitForm(false);
         }
-        setSubmitForm(false);
-
     }, [error]);
     // funcion que se ejecuta conforme el usuario escribe algo
     const handleChange = e =>{
@@ -28,11 +29,17 @@ export const useValidate = (initialState, validate, func) => {
         setError(errorValidate);
         setSubmitForm(true);
     }
+    // cuando se realiza el evento de blur
+    const handleBlur = () => {
+        const errorsValidation = validate(value);
+        setError(errorsValidation);
+    }
     return {
         value,
         error,
         submitForm,
         handleSubmit,
-        handleChange
+        handleChange,
+        handleBlur
     }
 }

@@ -19,9 +19,9 @@ const NavBar = styled.nav`
 export const Navbar = () => {
     return (
        <NavBar>
-           <Link href='/'>Inicio</Link>
-           <Link href='/trending'>Populares</Link>
-           <Link href='/new_product'>Nuevo Producto</Link>
+           <Link href='/'><a>Inicio</a></Link>
+           <Link href='/trending'><a>Populares</a></Link>
+           <Link href='/new_product'><a>Nuevo Producto</a></Link>
        </NavBar>
     )
 }
