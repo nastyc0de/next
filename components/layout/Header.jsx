@@ -5,6 +5,8 @@ import Link from 'next/link';
 import styled from '@emotion/styled';
 import { css } from '@emotion/core';
 import { Buttons } from '../ui/Buttons';
+import {FirebaseContext} from '../../firebase';
+import { useContext } from 'react';
 
 const HeaderNav = styled.div`
     max-width:1200px;
@@ -27,8 +29,7 @@ const Logo = styled.p`
 
 `;
 export const Header = () => {
-    
-    const user = false;
+    const {user, firebase} = useContext(FirebaseContext);
     return (
        <header
             css={css`
@@ -63,9 +64,10 @@ export const Header = () => {
                         <>   
                             <p
                             css={css`margin-right:2rem;`}
-                            >Hola: Andres</p>
+                            >Hola: {user.displayName}</p>
                             <Buttons
                                  bgColor="true"
+                                 onClick={() => firebase.closeLogin()}
                             >Cerrar Sesion</Buttons>
                         </>
                        ):(

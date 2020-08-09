@@ -20,18 +20,16 @@ export default function Login() {
   
     const {email, password} = value;
   
-    // async function createAccount(){
-    //   try {
-    //     await firebase.register(email, password);
-    //     Router.push('/');
-    //   } catch (error) {
-    //     console.error('Hubo un error al iniciar sesión', error);
-    //     setMsgError(error.message);
-    //   }
-    // }
-    function startLogin(){
-      console.log('Iniciando sesión');
+    async function startLogin(){
+     try {
+        await firebase.login(email, password);
+        Router.push('/');
+       } catch (error) {
+        console.error('Hubo un error al autenticar un usuario', error);
+        setMsgError(error.message);
+      }
     }
+    
     return (
       <div>
         <Layout>

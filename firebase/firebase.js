@@ -1,5 +1,7 @@
 import app from 'firebase/app';
 import 'firebase/auth';
+import 'firebase/firestore';
+import 'firebase/storage';
 
 import firebaseConfig from './config';
 
@@ -9,6 +11,8 @@ class Firebase {
             app.initializeApp(firebaseConfig)
         }
         this.auth = app.auth();
+        this.db = app.firestore();
+        this.storage = app.storage();
     }
     // registra un usuario
     async register(nombre, email, password){
@@ -17,6 +21,14 @@ class Firebase {
         return await newUser.user.updateProfile({
             displayName:nombre
         })
+    }
+    // iniciar sesion del usuario
+    async login(email, password){
+        return this.auth.signInWithEmailAndPassword(email, password);
+    }
+    // cierra sesion del usuario
+    async closeLogin(){
+        await this.auth.signOut();
     }
 }
 
