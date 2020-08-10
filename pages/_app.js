@@ -4,7 +4,6 @@ import useAuth from '../hooks/useAuth';
 
 const MyApp = props => {
   const user = useAuth();
-  console.log(user);
   const {Component, pageProps} = props;
 
   return (

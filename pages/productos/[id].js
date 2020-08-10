@@ -16,13 +16,23 @@ const DivProduct = styled.div`
         grid-template-columns: 2fr 1fr;
         column-gap: 2rem;
     }
-`
+`;
+const ProductCreator = styled.p`
+    padding: .5rem 2rem;
+    background-color:var(--fifth);
+    color: #fff;
+    text-transform: uppercase;
+    font-weight:bold;
+    display:inline-block;
+    text-align:center;
+`;
 const Producto = () => {
     
     // state del componente
     const [producto, setProducto] = useState({});
     const [error, setError] = useState(false);
     const [comment, setComment] = useState({});
+    const [queryDB, setQueryDB] = useState(true);
 
     // routing para obtener el id actual
     const router = useRouter();
@@ -31,12 +41,13 @@ const Producto = () => {
     // context de firebase
     const {firebase, user} = useContext(FirebaseContext);
     useEffect(() => {
-        if (id) {
+        if (id && queryDB) {
             const getProduct = async () => {
                 const queryProduct = await firebase.db.collection('productos').doc(id);
                 const product = await queryProduct.get();
                 if (product.exists) {
                     setProducto(product.data());
+                    setQueryDB(false);
                 } else {
                     setError(true);
                 }
@@ -44,7 +55,7 @@ const Producto = () => {
             getProduct();
         }
     }, [id, producto]);
-    if (Object.keys(producto).length === 0) return 'Cargando...';
+    if (Object.keys(producto).length === 0 && !error) return 'Cargando...';
     const {comentarios, creado, descripcion, empresa, nombre, url, urlImg, votos, creador, votado} = producto;
     
     const handleVote = () => {
@@ -64,6 +75,8 @@ const Producto = () => {
             ...producto,
             votos: nuevoTotal
         })
+        // existe un voto
+        setQueryDB(true); 
     }
     // funciones para crear comentarios
     const handleComment = e => {
@@ -72,7 +85,13 @@ const Producto = () => {
             [e.target.name]:e.target.value
         })
     }
-    // 
+    // identificar si el comentario es del creador del producto
+    const isCreated = id => {
+        if (creador.id == id) {
+            return true;
+        }
+    }
+    // funcion para agregar un comentario
     const handleAddComment = e => {
         e.preventDefault();
         if (!user) {
@@ -94,12 +113,35 @@ const Producto = () => {
             ...producto,
             comentarios: newComments
         })
+        // existe un comentario
+        setQueryDB(true); 
+    }
+    // funcion para idetificar el producto del usuario
+    const canDeleteProduct = () => {
+        if (!user) return false;
+        if (creador.id === user.uid) {
+            return true
+        }
+    }
+    const deleteProduct = async () => {
+        if (!user) {
+            return router.push('/login');
+        }
+        if (creador.id !== user.uid) {
+            return router.push('/')
+        }
+        try {
+            await firebase.db.collection('productos').doc(id).delete();
+            router.push('/');
+        } catch (error) {
+            console.error(error);
+        }
     }
     return (
         <>
             <Layout>
-                {error &&<Error404/>}
-                <div className="contenedor">
+                {error ? <Error404/>: (
+                    <div className="contenedor">
                     <h1 css={css`
                         text-align: center;
                         margin-top: 5rem;
@@ -146,6 +188,7 @@ const Producto = () => {
                                 >
                                     <p>{comentario.message}</p>
                                     <p>Escrito por:{comentario.userNombre}</p>
+                                    {isCreated(comentario.userId) &&<ProductCreator>Es Creador</ProductCreator>}
                                 </li>
                             ))}
                             </ul>
@@ -180,7 +223,17 @@ const Producto = () => {
                             </div>
                         </aside>
                     </DivProduct>
+                    {canDeleteProduct() &&
+                        <Buttons
+                        bgColor="true"
+                        onClick={deleteProduct}
+                        >
+                        Eliminar Producto
+                        </Buttons>
+                    }
                 </div>
+                )}
+                
             </Layout>
         </>
     )
